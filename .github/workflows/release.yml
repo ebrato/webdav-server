@@ -19,17 +19,20 @@ jobs:
 
       - name: Install Zig 0.15.2
         run: |
-          curl -L "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz" -o zig.tar.xz
+          curl -fL "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz" -o zig.tar.xz
           tar -xf zig.tar.xz
-          echo "$PWD/zig-x86_64-linux-0.15.2" >> "$GITHUB_PATH"
-          zig version
+          ZIG_DIR="$PWD/zig-x86_64-linux-0.15.2"
+          echo "$ZIG_DIR" >> "$GITHUB_PATH"
+          "$ZIG_DIR/zig" version
 
       - name: Install Cosmocc 4.0.2
         run: |
-          curl -L "https://cosmo.zip/pub/cosmocc/cosmocc-4.0.2.zip" -o cosmocc.zip
+          curl -fL "https://cosmo.zip/pub/cosmocc/cosmocc-4.0.2.zip" -o cosmocc.zip
           unzip -q cosmocc.zip
-          echo "$PWD/cosmocc/bin" >> "$GITHUB_PATH"
-          cosmocc --version || true
+          COSMO_DIR="$(find "$PWD" -maxdepth 1 -type d -name 'cosmocc-*' | head -n 1)"
+          test -n "$COSMO_DIR"
+          echo "$COSMO_DIR/bin" >> "$GITHUB_PATH"
+          "$COSMO_DIR/bin/cosmocc" --version
 
       - name: Build matrix binaries (including cosmo)
         run: zig build matrix -Doptimize=ReleaseFast
