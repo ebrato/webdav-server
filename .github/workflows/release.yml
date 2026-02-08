@@ -28,8 +28,11 @@ jobs:
       - name: Install Cosmocc 4.0.2
         run: |
           curl -fL "https://cosmo.zip/pub/cosmocc/cosmocc-4.0.2.zip" -o cosmocc.zip
-          unzip -q cosmocc.zip
-          COSMO_DIR="$(find "$PWD" -maxdepth 1 -type d -name 'cosmocc-*' | head -n 1)"
+          COSMO_ROOT="$RUNNER_TEMP/cosmocc"
+          rm -rf "$COSMO_ROOT"
+          mkdir -p "$COSMO_ROOT"
+          unzip -q -o cosmocc.zip -d "$COSMO_ROOT"
+          COSMO_DIR="$(find "$COSMO_ROOT" -maxdepth 1 -type d -name 'cosmocc-*' | head -n 1)"
           test -n "$COSMO_DIR"
           echo "$COSMO_DIR/bin" >> "$GITHUB_PATH"
           "$COSMO_DIR/bin/cosmocc" --version
